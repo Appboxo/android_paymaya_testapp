@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                             miniapp.sendPaymentResult(paymentData)
                         }
                     }
-                    startActivityForResult(
+                    appboxoActivity.startActivityForResult(
                         Intent(appboxoActivity, PaymentActivity::class.java)
                             .putExtra("transactionToken", paymentData.transactionToken)
                             .putExtra("amount", paymentData.amount)
