@@ -7,6 +7,12 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.appboxo.sdk.Appboxo
 import com.appboxo.ui.main.AppboxoActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +21,16 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.miniapp_btn).setOnClickListener {
             Appboxo.getMiniapp("app34795")
                 .setAuthListener { _, miniapp ->
-                    miniapp.setAuthCode("x+aipn0ODYv4+PZnqiogWVR1rGA4YQFlwmFTT6GV2Rza9LelWQjFUXy5k1SMgmZolDGd5+zh0IJc3vokMBldC74qkKUUoPI1z4K381kbBOW0az+xfs/UCZFkQZbSq5iEn7fofVHxCaSh66JZjZrjzuc9dSkW3IaUBjW/krZpV2Qr58emYQrUqBHb2N7YM01msXJPaasLbEaS3I3FCZ3cfcoSTZxzWQwQ3Chv2jpcaDEJ/7nHekInkwjgAa5x03Eu9bhlzv3uqbQd7xMOFEIRCGOubYkXn2udueeQuzG+tYv+CuShiI6KRbpXwtWmQidgsO1LhAP4KK6IZg4j3OHoZg==")
+                    GlobalScope.launch(Dispatchers.IO) {
+                        runCatching {
+                            val url =
+                                URL("https://9w1kyzp49e.execute-api.ap-southeast-1.amazonaws.com/Test/encryptedUserIdentifier")
+                            val urlConnection = url.openConnection() as HttpURLConnection
+                            val text = urlConnection.inputStream.bufferedReader().readText()
+                            val json = JSONObject(text)
+                            miniapp.setAuthCode(json.getString("body"))
+                        }
+                    }
                 }
                 .setPaymentEventListener { appboxoActivity: AppboxoActivity, miniapp, paymentData ->
                     appboxoActivity.doOnActivityResult { requestCode, resultCode, data ->
